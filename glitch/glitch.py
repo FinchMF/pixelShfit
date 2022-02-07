@@ -41,4 +41,17 @@ class Glitch(object):
     def pathOut(self) -> str:
         return self.__pathOut
 
+    
+    @property
+    def amnt(self) -> float:
+        return self.__amnt
+
+    @amnt.setter
+    def amnt(self, value: float):
+        if isinstance(value, float):
+            self.__amnt: float = value
+        else:
+            raise TypeError(f"Glich.amnt only supports type float\
+                                | type {type(value)}  was passed")
+
 
