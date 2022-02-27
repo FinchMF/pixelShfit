@@ -3,3 +3,4 @@ glitcher_env/
 __pycache__/
 env/
 .vscode
+processed/

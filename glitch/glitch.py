@@ -11,6 +11,17 @@ class BadImageException(Exception):
 
 
 class Glitch(object):
+    """
+        object to glitch image
+        ----------------------
+        image is glitched with pixel manipulation
+
+        -  :pathIn: path to image being glitched
+        -  :pathOut: path to resultant glitched image
+        -  :amnt: amount to change pixels by (0-1) - Default set at random
+        -  :seed: location of pixel changed within a window (0-1) - Default set at random
+        -  :n_iter: number of pixels (windows) to change - default set at random integer (0 - 40)
+     """
 
     def __init__(
         self,
@@ -30,7 +41,7 @@ class Glitch(object):
         self.__seed: float = seed
         self.__n_iter: int = n_iter
         self.__max_width: int = max_width
-        self._retries: int = max_retires
+        self.__max_retries: int = max_retries
         self.__verbose: bool = verbose
 
     @property
@@ -71,7 +82,7 @@ class Glitch(object):
         return self.__n_iter
 
     @n_iter.setter
-    def n_iter(sefl, values: int) -> None:
+    def n_iter(self, value: int) -> None:
         if isinstance(value, int):
             self.__n_iter: int = value
         else:
@@ -92,7 +103,7 @@ class Glitch(object):
 
     @property
     def max_retries(self) -> int:
-        return self.__max_retires
+        return self.__max_retries
 
     @max_retries.setter 
     def max_retries(self, value: int) -> None:
@@ -121,7 +132,7 @@ class Glitch(object):
         internal function to read in png image data
         """
         img: object = Image.open(self.pathIn)
-        img.convert('RBG')
+        img.convert('RGB')
         self._toBytes(img=img)
 
     def _jpg2data(self) -> None:
@@ -211,10 +222,10 @@ class Glitch(object):
 
         the function returns a modified copy of the image data
         """
-        found: int = self.data.find((255, 218))
+        found: int = self.data.find(bytes((255, 218)))
         if not found: raise BadImageException('Not Valid JPEG')
 
-        head_len: int = found + 2
+        header_len: int = found + 2
         self.checkVariables()
 
         if self.verbose:
@@ -234,8 +245,26 @@ class Glitch(object):
 
         return dataCopy
 
+    def processGlitch(self) -> None:
+        """
+        function to run gltich process an iterate through retires
+        """
 
+        self.readImg()
+        self.resize()
 
+        max_retr = self.max_retries
+        self.data = bytearray(self.data)
         
-
-
+        while max_retr:
+            self.dataCopy = self.glitch()
+            try:
+                self.writeImg()
+                if self.verbose: logger.info(f"glitched image saved to {self.pathOut}")
+                return
+            except BadImageException:
+                max_retr -= 1
+                if self.n_iter >= 10:
+                    if self.verbose: logger.info(f'Bad Image... retrying...\
+                                                 | {max_iter} retries left...')
+                    self.n_iter = int(0.9 * self.iter)
