@@ -4,5 +4,17 @@
 #
 #    pip-compile
 #
+certifi==2021.10.8
+    # via requests
+charset-normalizer==2.0.12
+    # via requests
+idna==3.3
+    # via requests
 pillow==9.0.1
     # via -r requirements.in
+pymango==0.1.1
+    # via -r requirements.in
+requests==2.27.1
+    # via pymango
+urllib3==1.26.8
+    # via requests

@@ -1,3 +1,11 @@
+"""
+module contains the Glitcher Object. 
+the purpose of the Glitcher is to automate 
+randomized parameters of glitching on a random image
+
+author@matthewfinch
+"""
+
 import os 
 import random 
 from glob import glob

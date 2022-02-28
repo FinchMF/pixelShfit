@@ -1,0 +1,2 @@
+[default]
+local=mongodb://localhost:27017
